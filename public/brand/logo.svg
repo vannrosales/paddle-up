@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" fill="none">
+  <defs>
+    <linearGradient id="logoBallGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4FF3A" />
+      <stop offset="100%" stop-color="#B2E008" />
+    </linearGradient>
+  </defs>
+  <!-- Mark -->
+  <g transform="translate(6, 6) scale(0.52)">
+    <rect width="100" height="100" rx="24" fill="#1C1C1E" />
+    <path d="M42 22 C30 22 24 30 24 44 C24 56 31 64 42 66 L38 82 C38 84 39.5 86 42 86 C44.5 86 46 84 46 82 L49 66.4 C58 65.5 64 58 64 44 C64 30 58 22 42 22 Z" fill="#2C2C2E" />
+    <circle cx="56" cy="40" r="22" fill="url(#logoBallGrad)" />
+    <circle cx="56" cy="31" r="2.8" fill="#1C2A00" fill-opacity="0.8" />
+    <circle cx="47" cy="37" r="2.8" fill="#1C2A00" fill-opacity="0.8" />
+    <circle cx="65" cy="37" r="2.8" fill="#1C2A00" fill-opacity="0.8" />
+    <circle cx="51" cy="47" r="2.8" fill="#1C2A00" fill-opacity="0.8" />
+    <circle cx="61" cy="47" r="2.8" fill="#1C2A00" fill-opacity="0.8" />
+  </g>
+  <!-- Text -->
+  <text x="72" y="38" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif" font-size="26" font-weight="800" letter-spacing="-0.03em" fill="#1C1C1E">Paddle<tspan fill="#65A30D">Up</tspan></text>
+  <text x="73" y="50" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif" font-size="9" font-weight="600" letter-spacing="0.08em" text-transform="uppercase" fill="#8E8E93">PROFILE &amp; ACHIEVEMENTS</text>
+</svg>
+

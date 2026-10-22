@@ -1,26 +1,97 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #F2F2F7;
+  --surface: #FFFFFF;
+  --surface-glass: rgba(255, 255, 255, 0.88);
+  --surface-glass-border: rgba(0, 0, 0, 0.08);
+  --text: #1C1C1E;
+  --text-muted: #6C6C70;
+  --accent: #C8F31D;
+  --accent-hover: #B8E214;
+  --accent-ink: #1C2A00;
+  --court: #0A84FF;
+  --court-green: #34C759;
+  --kitchen: #FF453A;
+  --separator: rgba(60, 60, 67, 0.14);
+  --radius-card: 20px;
+  --radius-sheet: 28px;
+  --radius-btn: 12px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --bg: #000000;
+  --surface: #1C1C1E;
+  --surface-glass: rgba(28, 28, 30, 0.88);
+  --surface-glass-border: rgba(255, 255, 255, 0.12);
+  --text: #F2F2F7;
+  --text-muted: #8E8E93;
+  --accent: #D4FF3A;
+  --accent-hover: #C4F028;
+  --accent-ink: #1C2A00;
+  --court: #0A84FF;
+  --court-green: #30D158;
+  --kitchen: #FF453A;
+  --separator: rgba(84, 84, 88, 0.45);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #F2F2F7;
+  background-color: var(--bg);
+  color: #1C1C1E;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dark body {
+  background-color: #000000;
+  color: #F2F2F7;
+}
+
+/* Court Glass Utility Classes */
+.glass-panel {
+  background-color: rgba(255, 255, 255, 0.88);
+  background-color: var(--surface-glass);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-color: var(--surface-glass-border);
+}
+
+.dark .glass-panel {
+  background-color: rgba(28, 28, 30, 0.88);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.glass-card {
+  background-color: #FFFFFF;
+  background-color: var(--surface);
+  border: 1px solid rgba(60, 60, 67, 0.14);
+  border-color: var(--separator);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-card {
+  background-color: #1C1C1E;
+  border-color: rgba(84, 84, 88, 0.45);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.hairline-border {
+  border-color: rgba(60, 60, 67, 0.14);
+  border-color: var(--separator);
+}
+
+.pickle-ball-pattern {
+  background-image: radial-gradient(rgba(60, 60, 67, 0.15) 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+}
+
+.dark .pickle-ball-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
 }
