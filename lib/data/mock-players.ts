@@ -1,5 +1,7 @@
 import { PlayerProfile } from "@/lib/types";
 import { DEFAULT_ROLES } from "@/lib/constants/roles";
+import { DEFAULT_BADGES } from "@/lib/constants/badges";
+import { MOCK_ENDORSEMENTS } from "@/lib/data/mock-engagement";
 
 export const MOCK_PLAYERS: PlayerProfile[] = [
   {
@@ -18,6 +20,8 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
     paddleBrand: "JOOLA Perseus CFS 16",
     homeClub: "Cebu Smash Pickleball Club",
     createdAt: "2024-01-15T08:00:00Z",
+    followersCount: 142,
+    followingCount: 68,
     roles: [
       {
         roleId: "role_dinker",
@@ -75,6 +79,34 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
         createdAt: "2023-11-10T12:00:00Z",
       },
     ],
+    badges: [
+      {
+        badgeId: "badge_podium",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_podium")!,
+        awardedAt: "2024-08-20T10:00:00Z",
+      },
+      {
+        badgeId: "badge_certified",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_certified")!,
+        awardedAt: "2023-11-10T12:00:00Z",
+      },
+      {
+        badgeId: "badge_club_reg",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_club_reg")!,
+        awardedAt: "2024-01-15T08:00:00Z",
+      },
+      {
+        badgeId: "badge_endorsed",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_endorsed")!,
+        awardedAt: "2024-09-12T16:00:00Z",
+      },
+      {
+        badgeId: "badge_kitchen",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_kitchen")!,
+        awardedAt: "2024-02-01T08:00:00Z",
+      },
+    ],
+    endorsements: MOCK_ENDORSEMENTS.filter((e) => e.toProfileId === "prof_001"),
   },
   {
     id: "prof_002",
@@ -92,6 +124,8 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
     paddleBrand: "Selkirk Vanguard Power Air Invikta",
     homeClub: "BGC Kitchen Crew",
     createdAt: "2023-10-01T10:00:00Z",
+    followersCount: 210,
+    followingCount: 95,
     roles: [
       {
         roleId: "role_power_hitter",
@@ -130,6 +164,29 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
         createdAt: "2024-03-01T11:00:00Z",
       },
     ],
+    badges: [
+      {
+        badgeId: "badge_podium",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_podium")!,
+        awardedAt: "2024-09-05T14:00:00Z",
+      },
+      {
+        badgeId: "badge_century",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_century")!,
+        awardedAt: "2024-03-01T11:00:00Z",
+      },
+      {
+        badgeId: "badge_club_reg",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_club_reg")!,
+        awardedAt: "2023-10-01T10:00:00Z",
+      },
+      {
+        badgeId: "badge_founding",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_founding")!,
+        awardedAt: "2023-10-01T10:00:00Z",
+      },
+    ],
+    endorsements: MOCK_ENDORSEMENTS.filter((e) => e.toProfileId === "prof_002"),
   },
   {
     id: "prof_003",
@@ -147,6 +204,8 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
     paddleBrand: "ProXR Signature Series",
     homeClub: "Marina Bay Pickleballers",
     createdAt: "2023-04-12T09:00:00Z",
+    followersCount: 389,
+    followingCount: 112,
     roles: [
       {
         roleId: "role_drop_specialist",
@@ -179,6 +238,24 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
         createdAt: "2024-06-28T08:00:00Z",
       },
     ],
+    badges: [
+      {
+        badgeId: "badge_podium",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_podium")!,
+        awardedAt: "2024-06-28T08:00:00Z",
+      },
+      {
+        badgeId: "badge_kitchen",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_kitchen")!,
+        awardedAt: "2023-04-12T09:00:00Z",
+      },
+      {
+        badgeId: "badge_club_reg",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_club_reg")!,
+        awardedAt: "2023-04-12T09:00:00Z",
+      },
+    ],
+    endorsements: MOCK_ENDORSEMENTS.filter((e) => e.toProfileId === "prof_003"),
   },
   {
     id: "prof_004",
@@ -196,6 +273,8 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
     paddleBrand: "Franklin Signature 16mm",
     homeClub: "Davao City Recreation Court",
     createdAt: "2024-02-10T11:00:00Z",
+    followersCount: 88,
+    followingCount: 54,
     roles: [
       {
         roleId: "role_all_court",
@@ -228,6 +307,18 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
         createdAt: "2024-04-16T15:00:00Z",
       },
     ],
+    badges: [
+      {
+        badgeId: "badge_podium",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_podium")!,
+        awardedAt: "2024-04-16T15:00:00Z",
+      },
+      {
+        badgeId: "badge_club_reg",
+        badge: DEFAULT_BADGES.find((b) => b.id === "badge_club_reg")!,
+        awardedAt: "2024-02-10T11:00:00Z",
+      },
+    ],
+    endorsements: MOCK_ENDORSEMENTS.filter((e) => e.toProfileId === "prof_004"),
   },
 ];
-

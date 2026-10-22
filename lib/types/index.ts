@@ -39,6 +39,88 @@ export interface Achievement {
   updatedAt?: string;
 }
 
+export interface Badge {
+  id: string;
+  key: string;
+  label: string;
+  description: string;
+  icon: string;
+  category?: string;
+  createdAt?: string;
+}
+
+export interface ProfileBadge {
+  badgeId: string;
+  badge: Badge;
+  awardedAt: string;
+}
+
+export type EndorsementKind = "skill" | "role" | "sportsmanship" | "general";
+
+export interface Endorsement {
+  id: string;
+  fromProfileId: string;
+  toProfileId: string;
+  kind: EndorsementKind;
+  targetValue?: string | null;
+  note?: string | null;
+  createdAt: string;
+  fromProfile?: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatarUrl?: string | null;
+    skillLevel?: number | null;
+  };
+}
+
+export type ClubRole = "owner" | "manager" | "member";
+
+export interface ClubMember {
+  clubId: string;
+  profileId: string;
+  role: ClubRole;
+  joinedAt: string;
+  profile?: PlayerProfile;
+}
+
+export interface Club {
+  id: string;
+  name: string;
+  slug: string;
+  city: string;
+  country?: string;
+  description?: string | null;
+  ownerId: string;
+  logoUrl?: string | null;
+  bannerUrl?: string | null;
+  memberCount: number;
+  members?: ClubMember[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface Follow {
+  followerId: string;
+  followingId: string;
+  createdAt: string;
+}
+
+export type ActivityType = "achievement" | "endorsement" | "badge" | "club_join";
+
+export interface ActivityItem {
+  id: string;
+  type: ActivityType;
+  profileId: string;
+  profileName: string;
+  profileUsername: string;
+  profileAvatar?: string | null;
+  title: string;
+  description: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
 export interface PlayerProfile {
   id: string;
   userId: string;
@@ -56,6 +138,10 @@ export interface PlayerProfile {
   paddleBrand?: string | null;
   roles?: ProfileRole[];
   achievements?: Achievement[];
+  badges?: ProfileBadge[];
+  endorsements?: Endorsement[];
+  followersCount?: number;
+  followingCount?: number;
   createdAt: string;
   updatedAt?: string;
 }
@@ -75,4 +161,3 @@ export interface UserRoleRecord {
   grantedBy?: string | null;
   grantedAt: string;
 }
-

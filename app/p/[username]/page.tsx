@@ -6,11 +6,16 @@ import { getPlayerByUsername } from "@/lib/services/player-service";
 import { RoleChip } from "@/components/role-chip";
 import { SkillBadge } from "@/components/skill-badge";
 import { AchievementItem } from "@/components/achievement-item";
+import { BadgeTile } from "@/components/badge-tile";
+import { ProfileActions } from "@/components/profile-actions";
+import { DEFAULT_BADGES } from "@/lib/constants/badges";
 import {
   MapPin,
   Trophy,
   ShieldCheck,
   ArrowLeft,
+  Award,
+  Sparkles,
 } from "lucide-react";
 
 interface ProfilePageProps {
@@ -34,11 +39,19 @@ export async function generateMetadata({
 
   return {
     title: `${player.displayName} (@${player.username})`,
-    description: `${player.displayName} - ${primaryRole}. ${ratingText}. ${player.bio || "View achievements and player role on PaddleUp."}`,
+    description: `${player.displayName} - ${primaryRole}. ${ratingText}. ${player.bio || "View achievements, endorsements, and badges on PaddleUp."}`,
     openGraph: {
       title: `${player.displayName} | Pickleball Profile`,
       description: `${primaryRole} · ${player.city || "Pickleballer"} · ${player.achievements?.length || 0} Achievements`,
       type: "profile",
+      images: [
+        {
+          url: `/p/${player.username}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `${player.displayName} Pickleball Passport Card`,
+        },
+      ],
     },
   };
 }
@@ -54,11 +67,13 @@ export default async function PlayerProfilePage({ params }: ProfilePageProps) {
   const primaryRole = player.roles?.find((r) => r.isPrimary);
   const secondaryRoles = player.roles?.filter((r) => !r.isPrimary) || [];
   const achievements = player.achievements || [];
+  const endorsements = player.endorsements || [];
+  const unlockedBadgesMap = new Map((player.badges || []).map((b) => [b.badge.id, b]));
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 md:py-12">
-      {/* Back button */}
-      <div className="mb-6">
+      {/* Back to Directory & Quick Actions */}
+      <div className="flex items-center justify-between gap-4 mb-6">
         <Link
           href="/players"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
@@ -66,6 +81,8 @@ export default async function PlayerProfilePage({ params }: ProfilePageProps) {
           <ArrowLeft className="w-4 h-4" />
           <span>Back to directory</span>
         </Link>
+
+        <ProfileActions player={player} />
       </div>
 
       {/* Profile Header Card ("Court Glass" style) */}
@@ -102,7 +119,13 @@ export default async function PlayerProfilePage({ params }: ProfilePageProps) {
                 </span>
               </div>
 
-              <p className="text-sm font-mono text-neutral-500 dark:text-neutral-400">@{player.username}</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-sm font-mono text-neutral-500 dark:text-neutral-400">@{player.username}</p>
+                <span className="text-xs text-neutral-400">•</span>
+                <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-300">
+                  {player.followersCount || 0} followers
+                </span>
+              </div>
 
               {(player.city || player.country) && (
                 <div className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400 mt-1.5 font-medium">
@@ -176,6 +199,112 @@ export default async function PlayerProfilePage({ params }: ProfilePageProps) {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Badges System Showcase (Feature 11) */}
+      <div className="mb-10 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-lime-600 dark:text-[#C8F31D]" />
+            <h2 className="text-xl font-bold tracking-tight text-neutral-950 dark:text-white">
+              Badges &amp; Accolades
+            </h2>
+          </div>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-lime-500/10 text-lime-700 dark:text-[#C8F31D]">
+            {unlockedBadgesMap.size} of {DEFAULT_BADGES.length} unlocked
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+          {DEFAULT_BADGES.map((badge) => {
+            const unlocked = unlockedBadgesMap.get(badge.id);
+            return (
+              <BadgeTile
+                key={badge.id}
+                badge={badge}
+                isUnlocked={Boolean(unlocked)}
+                awardedAt={unlocked?.awardedAt}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Peer Endorsements Section (Feature 10) */}
+      <div className="mb-10 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Award className="w-5 h-5 text-amber-500" />
+            <h2 className="text-xl font-bold tracking-tight text-neutral-950 dark:text-white">
+              Peer Endorsements
+            </h2>
+          </div>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+            {endorsements.length} vouches
+          </span>
+        </div>
+
+        {endorsements.length > 0 ? (
+          <div className="grid gap-3.5">
+            {endorsements.map((end) => (
+              <div
+                key={end.id}
+                className="rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-200 dark:border-neutral-800 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+              >
+                <div className="flex items-start gap-3.5">
+                  <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 flex-shrink-0">
+                    {end.fromProfile?.avatarUrl ? (
+                      <Image
+                        src={end.fromProfile.avatarUrl}
+                        alt={end.fromProfile.displayName}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center font-bold text-neutral-500 text-sm">
+                        {end.fromProfile?.displayName.charAt(0) || "P"}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/p/${end.fromProfile?.username || "marias"}`}
+                        className="text-xs font-bold text-neutral-950 dark:text-white hover:underline"
+                      >
+                        {end.fromProfile?.displayName || "Fellow Pickleballer"}
+                      </Link>
+                      {end.fromProfile?.skillLevel && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-lime-500/15 text-lime-700 dark:text-[#C8F31D]">
+                          {end.fromProfile.skillLevel.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 mt-0.5">
+                      Vouched for: <span className="text-lime-700 dark:text-[#C8F31D] font-bold">{end.targetValue || "Skill & Role"}</span>
+                    </p>
+
+                    {end.note && (
+                      <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 italic">
+                        &ldquo;{end.note}&rdquo;
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 dark:text-neutral-500 self-end sm:self-center">
+                  {new Date(end.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-200 dark:border-neutral-800 p-8 text-center text-xs text-neutral-500 dark:text-neutral-400 shadow-xs">
+            No peer endorsements yet. Be the first to vouch for {player.displayName}!
+          </div>
+        )}
       </div>
 
       {/* Achievements Section */}

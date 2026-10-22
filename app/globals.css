@@ -95,3 +95,21 @@ body {
 .dark .pickle-ball-pattern {
   background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
 }
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--confetti-vx), var(--confetti-vy), 0) rotate(var(--confetti-vr));
+  }
+}
+
+.animate-confetti-fall {
+  animation: confetti-fall 2.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}

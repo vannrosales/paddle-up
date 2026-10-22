@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, User, PlusCircle } from "lucide-react";
+import { Home, Users, User, Trophy, Shield } from "lucide-react";
 
 export function MobileTabBar() {
   const pathname = usePathname();
@@ -11,13 +11,14 @@ export function MobileTabBar() {
   const tabs = [
     { label: "Home", href: "/", icon: Home, exact: true },
     { label: "Players", href: "/players", icon: Users },
-    { label: "Add Win", href: "/dashboard/achievements/new", icon: PlusCircle },
-    { label: "Profile", href: "/dashboard", icon: User },
+    { label: "Rankings", href: "/leaderboard", icon: Trophy },
+    { label: "Clubs", href: "/clubs", icon: Shield },
+    { label: "Dashboard", href: "/dashboard", icon: User },
   ];
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#1C1C1E]/90 backdrop-blur-xl border-t border-neutral-200/90 dark:border-neutral-800 pb-[env(safe-area-inset-bottom)]">
-      <nav className="flex items-center justify-around h-16 px-2">
+      <nav className="flex items-center justify-around h-16 px-1">
         {tabs.map((tab) => {
           const isActive = tab.exact
             ? pathname === tab.href
@@ -36,8 +37,8 @@ export function MobileTabBar() {
             >
               <div
                 className={`p-1 rounded-xl transition-colors ${
-                  isActive && tab.label === "Add Win"
-                    ? "bg-[#C8F31D] text-[#1C2A00]"
+                  isActive
+                    ? "bg-[#C8F31D]/15 text-lime-700 dark:text-[#C8F31D]"
                     : ""
                 }`}
               >

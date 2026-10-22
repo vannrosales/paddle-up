@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Users, LayoutDashboard, UserPlus, LogIn } from "lucide-react";
+import { Users, LayoutDashboard, UserPlus, LogIn, Trophy, Shield } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -33,7 +33,21 @@ export function Navbar() {
             className="flex items-center gap-1.5 text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors"
           >
             <Users className="w-4 h-4" />
-            <span>Players Directory</span>
+            <span>Players</span>
+          </Link>
+          <Link
+            href="/leaderboard"
+            className="flex items-center gap-1.5 text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors"
+          >
+            <Trophy className="w-4 h-4 text-amber-500" />
+            <span>Leaderboard</span>
+          </Link>
+          <Link
+            href="/clubs"
+            className="flex items-center gap-1.5 text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors"
+          >
+            <Shield className="w-4 h-4 text-blue-500" />
+            <span>Clubs</span>
           </Link>
           <Link
             href="/dashboard"

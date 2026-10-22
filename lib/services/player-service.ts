@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/client";
 import { PlayerProfile, Role, Achievement } from "@/lib/types";
 import { MOCK_PLAYERS } from "@/lib/data/mock-players";
 import { DEFAULT_ROLES } from "@/lib/constants/roles";
+import { getEndorsementsForPlayer } from "@/lib/services/endorsement-service";
+import { evaluateAndAwardBadges } from "@/lib/services/badge-service";
+import { getFollowerCounts } from "@/lib/services/follow-service";
 
 // In-memory runtime cache for development / mock mode
 const localPlayers: PlayerProfile[] = [...MOCK_PLAYERS];
@@ -155,6 +158,7 @@ export async function getPlayers(filters: PlayerFilterOptions = {}): Promise<Pla
 export async function getPlayerByUsername(username: string): Promise<PlayerProfile | null> {
   const cleanUsername = username.toLowerCase().trim();
   const supabase = createClient();
+  let player: PlayerProfile | null = null;
 
   if (supabase) {
     try {
@@ -174,7 +178,7 @@ export async function getPlayerByUsername(username: string): Promise<PlayerProfi
 
       if (!error && data) {
         const row = data as unknown as SupabaseProfileRow;
-        return {
+        player = {
           id: row.id,
           userId: row.user_id,
           username: row.username,
@@ -203,7 +207,27 @@ export async function getPlayerByUsername(username: string): Promise<PlayerProfi
     }
   }
 
-  return localPlayers.find((p) => p.username.toLowerCase() === cleanUsername) || null;
+  if (!player) {
+    player = localPlayers.find((p) => p.username.toLowerCase() === cleanUsername) || null;
+  }
+
+  if (player) {
+    // Enrich with dynamic Phase 2 engagement data
+    const [endorsements, counts] = await Promise.all([
+      getEndorsementsForPlayer(player.id),
+      getFollowerCounts(player.id),
+    ]);
+
+    player.endorsements = endorsements;
+    player.followersCount = counts.followers || player.followersCount || 0;
+    player.followingCount = counts.following || player.followingCount || 0;
+
+    // Evaluate badges
+    const badges = await evaluateAndAwardBadges(player);
+    player.badges = badges;
+  }
+
+  return player;
 }
 
 export async function savePlayerProfile(
@@ -239,7 +263,6 @@ export async function savePlayerProfile(
         .single();
 
       if (!error && data) {
-        // Handle roles
         if (profileData.primaryRoleId) {
           await supabase
             .from("profile_roles")
@@ -314,4 +337,3 @@ export async function savePlayerProfile(
     return newProfile;
   }
 }
-
