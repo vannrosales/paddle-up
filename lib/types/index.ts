@@ -106,7 +106,7 @@ export interface Follow {
   createdAt: string;
 }
 
-export type ActivityType = "achievement" | "endorsement" | "badge" | "club_join";
+export type ActivityType = "achievement" | "endorsement" | "badge" | "club_join" | "match_logged";
 
 export interface ActivityItem {
   id: string;
@@ -120,6 +120,8 @@ export interface ActivityItem {
   timestamp: string;
   metadata?: Record<string, unknown>;
 }
+
+export type PlayPreference = "casual" | "competitive" | "drills" | "all";
 
 export interface PlayerProfile {
   id: string;
@@ -142,6 +144,10 @@ export interface PlayerProfile {
   endorsements?: Endorsement[];
   followersCount?: number;
   followingCount?: number;
+  // Phase 3 Partner Finder
+  lookingForPartner?: boolean;
+  preferredPlayTimes?: string | null;
+  playPreference?: PlayPreference | null;
   createdAt: string;
   updatedAt?: string;
 }
@@ -161,3 +167,78 @@ export interface UserRoleRecord {
   grantedBy?: string | null;
   grantedAt: string;
 }
+
+// Phase 3: Match Logs (Feature 16)
+export type MatchResult = "win" | "loss";
+export type MatchType = "singles" | "doubles" | "mixed";
+
+export interface Match {
+  id: string;
+  profileId: string;
+  partnerId?: string | null;
+  partnerName?: string | null;
+  opponents: string;
+  score: string;
+  result: MatchResult;
+  matchType: MatchType;
+  notes?: string | null;
+  playedAt: string;
+  createdAt: string;
+}
+
+export interface MatchStats {
+  totalMatches: number;
+  wins: number;
+  losses: number;
+  winRate: number; // percentage, e.g. 72.5
+  currentStreak: number; // positive for win streak, negative for loss streak
+}
+
+// Phase 3: Tournament Pages (Feature 18)
+export type TournamentStatus = "upcoming" | "in_progress" | "completed";
+
+export interface TournamentResultEntry {
+  placement: "Gold" | "Silver" | "Bronze" | "Participant" | string;
+  division: string;
+  playerName: string;
+  playerUsername?: string;
+  partnerName?: string;
+  partnerUsername?: string;
+}
+
+export interface Tournament {
+  id: string;
+  name: string;
+  slug: string;
+  city: string;
+  country?: string;
+  startDate: string;
+  endDate?: string | null;
+  division: string;
+  status: TournamentStatus;
+  organizerId: string;
+  organizerName?: string;
+  bannerUrl?: string | null;
+  description?: string | null;
+  results: TournamentResultEntry[];
+  createdAt: string;
+}
+
+// Phase 3: Moderation & Reports (Feature 23)
+export type ReportTargetType = "profile" | "achievement" | "match";
+export type ReportStatus = "pending" | "resolved" | "dismissed";
+
+export interface ModerationReport {
+  id: string;
+  reporterId: string;
+  reporterName?: string;
+  targetType: ReportTargetType;
+  targetId: string;
+  targetTitle?: string;
+  reason: string;
+  status: ReportStatus;
+  createdAt: string;
+}
+
+// Phase 3: Multi-language (Feature 22)
+export type SupportedLanguage = "en" | "fil" | "zh";

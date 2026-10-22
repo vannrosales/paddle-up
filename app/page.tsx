@@ -11,7 +11,8 @@ import {
   Award,
   Sparkles,
   Trophy,
-  Users,
+  UserCheck,
+  ArrowLeftRight,
 } from "lucide-react";
 
 export default async function HomePage() {
@@ -36,11 +37,11 @@ export default async function HomePage() {
         </h1>
 
         <p className="mt-6 text-lg sm:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-          Create your verified player identity, declare your court role, record medals and tournament milestones, earn community badges, and get discovered by local clubs.
+          Create your verified player identity, declare your court role, record medals and tournament milestones, log casual matches, earn community badges, and find doubles partners.
         </p>
 
         {/* Hero Actions */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/onboarding"
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#C8F31D] text-[#1C2A00] font-bold text-base hover:bg-[#b8e214] active:scale-95 transition-all shadow-md"
@@ -49,18 +50,25 @@ export default async function HomePage() {
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
-            href="/players"
+            href="/partners"
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 font-semibold text-base hover:bg-neutral-50 dark:hover:bg-neutral-800 active:scale-95 transition-all shadow-xs"
           >
-            <Search className="w-4 h-4 text-neutral-500" />
-            <span>Browse Directory</span>
+            <UserCheck className="w-4 h-4 text-lime-600 dark:text-[#C8F31D]" />
+            <span>Find a Partner</span>
           </Link>
           <Link
-            href="/leaderboard"
+            href="/tournaments"
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 font-semibold text-base hover:bg-amber-500/20 active:scale-95 transition-all shadow-xs"
           >
             <Trophy className="w-4 h-4 text-amber-500" />
-            <span>Leaderboards</span>
+            <span>Tournaments</span>
+          </Link>
+          <Link
+            href="/compare"
+            className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 font-semibold text-base hover:bg-blue-500/20 active:scale-95 transition-all shadow-xs"
+          >
+            <ArrowLeftRight className="w-4 h-4 text-blue-500" />
+            <span>Compare</span>
           </Link>
         </div>
 
@@ -84,7 +92,7 @@ export default async function HomePage() {
         </div>
 
         {/* Highlights Row */}
-        <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto text-left">
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
           <div className="p-4 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-200 dark:border-neutral-800 shadow-xs">
             <div className="flex items-center gap-2 mb-1">
               <Zap className="w-4 h-4 text-lime-600 dark:text-[#C8F31D]" />
@@ -110,14 +118,14 @@ export default async function HomePage() {
           </div>
 
           <Link
-            href="/clubs"
-            className="p-4 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-200 dark:border-neutral-800 shadow-xs hover:border-blue-500 transition-colors group"
+            href="/partners"
+            className="p-4 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-200 dark:border-neutral-800 shadow-xs hover:border-lime-500 transition-colors group"
           >
             <div className="flex items-center gap-2 mb-1">
-              <Users className="w-4 h-4 text-purple-500 group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Clubs &amp; Teams</span>
+              <UserCheck className="w-4 h-4 text-lime-600 dark:text-[#C8F31D] group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Partner Finder</span>
             </div>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">Join rosters, compete in team ladders, and track wins.</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">Match by schedule, location, and playing style.</p>
           </Link>
         </div>
       </section>

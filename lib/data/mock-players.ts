@@ -22,6 +22,9 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
     createdAt: "2024-01-15T08:00:00Z",
     followersCount: 142,
     followingCount: 68,
+    lookingForPartner: true,
+    preferredPlayTimes: "Saturday & Sunday mornings (6 AM - 10 AM)",
+    playPreference: "competitive",
     roles: [
       {
         roleId: "role_dinker",
@@ -126,6 +129,9 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
     createdAt: "2023-10-01T10:00:00Z",
     followersCount: 210,
     followingCount: 95,
+    lookingForPartner: true,
+    preferredPlayTimes: "Tuesday & Thursday evenings (6 PM - 9 PM)",
+    playPreference: "competitive",
     roles: [
       {
         roleId: "role_power_hitter",
@@ -275,6 +281,9 @@ export const MOCK_PLAYERS: PlayerProfile[] = [
     createdAt: "2024-02-10T11:00:00Z",
     followersCount: 88,
     followingCount: 54,
+    lookingForPartner: true,
+    preferredPlayTimes: "Saturday afternoons & Sunday round-robins",
+    playPreference: "casual",
     roles: [
       {
         roleId: "role_all_court",

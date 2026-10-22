@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
+import { CommandPalette } from "@/components/command-palette";
+import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -64,6 +66,8 @@ export default function RootLayout({
           <Navbar />
           <main className="flex-1">{children}</main>
           <MobileTabBar />
+          <CommandPalette />
+          <PwaInstallPrompt />
         </ThemeProvider>
       </body>
     </html>

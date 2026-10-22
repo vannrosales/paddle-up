@@ -5,7 +5,8 @@ import { PlayerProfile } from "@/lib/types";
 import { EndorseModal } from "@/components/endorse-modal";
 import { ShareCardModal } from "@/components/share-card-modal";
 import { followPlayer, unfollowPlayer } from "@/lib/services/follow-service";
-import { UserPlus, UserCheck, Award, Share2 } from "lucide-react";
+import { UserPlus, UserCheck, Award, Share2, Printer } from "lucide-react";
+import Link from "next/link";
 
 interface ProfileActionsProps {
   player: PlayerProfile;
@@ -95,6 +96,16 @@ export function ProfileActions({
           <Share2 className="w-3.5 h-3.5 text-lime-600 dark:text-[#C8F31D]" />
           <span>Share Pass</span>
         </button>
+
+        {/* Printable Resume Link */}
+        <Link
+          href={`/p/${player.username}/resume`}
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-semibold transition-colors"
+          title="Print official player resume"
+        >
+          <Printer className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Resume</span>
+        </Link>
       </div>
 
       {/* Modals */}

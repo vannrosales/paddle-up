@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { PlayerProfile, Achievement, ActivityItem, Endorsement } from "@/lib/types";
+import { PlayerProfile, Achievement, ActivityItem, Endorsement, Match, MatchStats } from "@/lib/types";
 import { MOCK_PLAYERS } from "@/lib/data/mock-players";
 import { RoleChip } from "@/components/role-chip";
 import { SkillBadge } from "@/components/skill-badge";
@@ -14,6 +14,7 @@ import { deleteAchievement } from "@/lib/services/achievement-service";
 import { getActivityFeed } from "@/lib/services/follow-service";
 import { getEndorsementsForPlayer } from "@/lib/services/endorsement-service";
 import { evaluateAndAwardBadges } from "@/lib/services/badge-service";
+import { getMatchesByProfileId, getMatchStats } from "@/lib/services/match-service";
 import { signOutUser } from "@/lib/auth/auth-service";
 import { DEFAULT_BADGES } from "@/lib/constants/badges";
 import {
@@ -27,7 +28,12 @@ import {
   Award,
   Activity,
   Share2,
-  Users,
+  Flame,
+  CheckCircle,
+  XCircle,
+  ShieldAlert,
+  Printer,
+  UserCheck,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -37,7 +43,17 @@ export default function DashboardPage() {
   );
   const [endorsements, setEndorsements] = useState<Endorsement[]>([]);
   const [feed, setFeed] = useState<ActivityItem[]>([]);
-  const [activeTab, setActiveTab] = useState<"achievements" | "feed" | "endorsements" | "badges">("achievements");
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [matchStats, setMatchStats] = useState<MatchStats>({
+    totalMatches: 0,
+    wins: 0,
+    losses: 0,
+    winRate: 0,
+    currentStreak: 0,
+  });
+  const [activeTab, setActiveTab] = useState<
+    "achievements" | "matches" | "feed" | "endorsements" | "badges"
+  >("achievements");
   const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
@@ -60,15 +76,19 @@ export default function DashboardPage() {
       setPlayer(active);
       setAchievements(active.achievements || []);
 
-      // Load endorsements, badges, and activity feed
-      const [endList, actFeed, awardedBadges] = await Promise.all([
+      // Load endorsements, badges, activity feed, and matches
+      const [endList, actFeed, awardedBadges, matchHistory, stats] = await Promise.all([
         getEndorsementsForPlayer(active.id),
         getActivityFeed(active.id),
         evaluateAndAwardBadges(active),
+        getMatchesByProfileId(active.id),
+        getMatchStats(active.id),
       ]);
 
       setEndorsements(endList);
       setFeed(actFeed);
+      setMatches(matchHistory);
+      setMatchStats(stats);
       active.badges = awardedBadges;
       setPlayer({ ...active, badges: awardedBadges });
     }, 0);
@@ -100,7 +120,7 @@ export default function DashboardPage() {
             </span>
           </div>
           <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-            Manage your public presence, verified skills, and tournament credentials.
+            Manage your public presence, match log, verified skills, and tournament credentials.
           </p>
         </div>
 
@@ -182,7 +202,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Follower Stats Bar */}
-            <div className="grid grid-cols-2 gap-2 py-3 border-y border-neutral-100 dark:border-neutral-800 text-center text-xs">
+            <div className="grid grid-cols-3 gap-2 py-3 border-y border-neutral-100 dark:border-neutral-800 text-center text-xs">
               <div>
                 <span className="block font-black text-sm text-neutral-900 dark:text-white">
                   {player.followersCount || 142}
@@ -193,10 +213,18 @@ export default function DashboardPage() {
               </div>
               <div>
                 <span className="block font-black text-sm text-neutral-900 dark:text-white">
-                  {player.followingCount || 68}
+                  {matchStats.winRate}%
                 </span>
                 <span className="text-[10px] uppercase font-bold text-neutral-400">
-                  Following
+                  Win Rate
+                </span>
+              </div>
+              <div>
+                <span className="block font-black text-sm text-neutral-900 dark:text-white">
+                  {matchStats.currentStreak > 0 ? `+${matchStats.currentStreak}W` : `${matchStats.currentStreak}L`}
+                </span>
+                <span className="text-[10px] uppercase font-bold text-neutral-400">
+                  Streak
                 </span>
               </div>
             </div>
@@ -209,9 +237,13 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-xs text-neutral-600 dark:text-neutral-400">Visibility:</span>
-                <span className="text-xs font-bold capitalize px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200">
-                  {player.visibility}
+                <span className="text-xs text-neutral-600 dark:text-neutral-400">Partner Seeking:</span>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${
+                  player.lookingForPartner
+                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                    : "bg-neutral-100 dark:bg-neutral-800 text-neutral-500"
+                }`}>
+                  {player.lookingForPartner ? "Looking to play" : "Not seeking"}
                 </span>
               </div>
 
@@ -236,25 +268,47 @@ export default function DashboardPage() {
             </h4>
             <div className="grid gap-2">
               <Link
-                href="/dashboard/achievements/new"
+                href="/dashboard/matches/new"
                 className="flex items-center justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs font-bold text-neutral-900 dark:text-white hover:border-lime-500 transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <PlusCircle className="w-4 h-4 text-lime-600 dark:text-[#C8F31D]" />
-                  <span>Log New Achievement / Medal</span>
+                  <span>Log Match Record</span>
                 </div>
-                <span className="text-lime-700 dark:text-[#C8F31D]">+ Add</span>
+                <span className="text-lime-700 dark:text-[#C8F31D]">+ Log</span>
               </Link>
 
               <Link
-                href="/clubs"
+                href="/partners"
                 className="flex items-center justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs font-bold text-neutral-900 dark:text-white hover:border-blue-500 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-blue-500" />
-                  <span>Browse Clubs &amp; Teams</span>
+                  <UserCheck className="w-4 h-4 text-blue-500" />
+                  <span>Find Playing Partner</span>
                 </div>
-                <span className="text-blue-500">Explore</span>
+                <span className="text-blue-500">Search</span>
+              </Link>
+
+              <Link
+                href={`/p/${player.username}/resume`}
+                className="flex items-center justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs font-bold text-neutral-900 dark:text-white hover:border-amber-500 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Printer className="w-4 h-4 text-amber-500" />
+                  <span>Print Player Resume (PDF)</span>
+                </div>
+                <span className="text-amber-500">PDF</span>
+              </Link>
+
+              <Link
+                href="/admin"
+                className="flex items-center justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs font-bold text-neutral-900 dark:text-white hover:border-red-500 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 text-red-500" />
+                  <span>Moderator Console</span>
+                </div>
+                <span className="text-red-500">Admin</span>
               </Link>
             </div>
           </div>
@@ -265,7 +319,8 @@ export default function DashboardPage() {
           {/* Dashboard Navigation Tabs */}
           <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-200 dark:border-neutral-800 shadow-xs overflow-x-auto">
             {[
-              { id: "achievements" as const, label: `Achievements (${achievements.length})`, icon: Trophy },
+              { id: "achievements" as const, label: `Medals (${achievements.length})`, icon: Trophy },
+              { id: "matches" as const, label: `Match Log (${matches.length})`, icon: Flame },
               { id: "feed" as const, label: "Activity Feed", icon: Activity },
               { id: "endorsements" as const, label: `Endorsements (${endorsements.length})`, icon: Award },
               { id: "badges" as const, label: `Badges (${unlockedBadgesMap.size})`, icon: Sparkles },
@@ -346,7 +401,109 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* TAB 2: Activity Feed (Feature 14) */}
+          {/* TAB 2: Matches Log (Feature 16) */}
+          {activeTab === "matches" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-extrabold tracking-tight text-neutral-950 dark:text-white">
+                    Match Record &amp; Win Rate
+                  </h2>
+                  <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5">
+                    Casual and competitive matches logged with partners and opponents.
+                  </p>
+                </div>
+
+                <Link
+                  href="/dashboard/matches/new"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C8F31D] text-[#1C2A00] font-bold text-xs hover:bg-[#b8e214] active:scale-95 transition-all shadow-xs"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Log Match</span>
+                </Link>
+              </div>
+
+              {/* Match Stats Banner */}
+              <div className="rounded-2xl bg-neutral-900 text-white p-5 grid grid-cols-4 gap-2 text-center border border-neutral-800">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Total</span>
+                  <span className="text-lg font-black">{matchStats.totalMatches}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Wins</span>
+                  <span className="text-lg font-black text-emerald-400">{matchStats.wins}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Losses</span>
+                  <span className="text-lg font-black text-neutral-400">{matchStats.losses}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Win %</span>
+                  <span className="text-lg font-black text-[#C8F31D]">{matchStats.winRate}%</span>
+                </div>
+              </div>
+
+              {/* Match List */}
+              {matches.length > 0 ? (
+                <div className="grid gap-3">
+                  {matches.map((m) => (
+                    <div
+                      key={m.id}
+                      className="rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-200 dark:border-neutral-800 p-4 shadow-xs flex items-center justify-between gap-4"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs uppercase flex-shrink-0 ${
+                            m.result === "win"
+                              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                              : "bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
+                          }`}
+                        >
+                          {m.result === "win" ? (
+                            <CheckCircle className="w-5 h-5 text-emerald-600" />
+                          ) : (
+                            <XCircle className="w-5 h-5 text-neutral-400" />
+                          )}
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-xs uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 text-[10px]">
+                              {m.matchType}
+                            </span>
+                            <span className="font-bold text-sm text-neutral-950 dark:text-white">
+                              vs {m.opponents}
+                            </span>
+                          </div>
+
+                          <p className="text-xs text-neutral-500 mt-0.5 font-medium">
+                            {m.partnerName ? `Partner: ${m.partnerName} · ` : ""}
+                            Score: <span className="font-mono font-bold text-neutral-800 dark:text-neutral-200">{m.score}</span>
+                          </p>
+
+                          {m.notes && (
+                            <p className="text-xs text-neutral-500 mt-1 italic">
+                              &ldquo;{m.notes}&rdquo;
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <span className="text-[10px] font-mono text-neutral-400">
+                        {m.playedAt}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-2xl bg-white dark:bg-[#1C1C1E] border border-neutral-200 dark:border-neutral-800 p-8 text-center text-xs text-neutral-500">
+                  No casual matches logged yet. Tap &ldquo;Log Match&rdquo; to start recording wins!
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: Activity Feed */}
           {activeTab === "feed" && (
             <div className="space-y-4">
               <div>
@@ -404,7 +561,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* TAB 3: Endorsements (Feature 10) */}
+          {/* TAB 4: Endorsements */}
           {activeTab === "endorsements" && (
             <div className="space-y-4">
               <div>
@@ -457,7 +614,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* TAB 4: Badges (Feature 11) */}
+          {/* TAB 5: Badges */}
           {activeTab === "badges" && (
             <div className="space-y-4">
               <div>
